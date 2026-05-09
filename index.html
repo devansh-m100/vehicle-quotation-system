@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toyota Price Finder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Rajyog Toyota</p>
+        <h1>Car Price Finder</h1>
+        <p class="hero-text">
+          Search by model name, fuel type, and variant to instantly view the matching
+          price details from your uploaded price sheets.
+        </p>
+      </div>
+      <div class="hero-card">
+        <p class="hero-card-label">Dataset</p>
+        <p class="hero-card-value" id="total-records">0 variants</p>
+        <p class="hero-card-note">Seeded from your Toyota price-list images dated 07-Apr-2026.</p>
+      </div>
+    </section>
+
+    <section class="search-panel">
+      <div class="search-field">
+        <label for="model-input">Model Name</label>
+        <input id="model-input" list="model-options" placeholder="Start typing a model">
+        <datalist id="model-options"></datalist>
+      </div>
+
+      <div class="search-field">
+        <label for="fuel-input">Fuel Type</label>
+        <input id="fuel-input" list="fuel-options" placeholder="Choose fuel type">
+        <datalist id="fuel-options"></datalist>
+      </div>
+
+      <div class="search-field">
+        <label for="variant-input">Variant</label>
+        <input id="variant-input" list="variant-options" placeholder="Search variant">
+        <datalist id="variant-options"></datalist>
+      </div>
+
+      <div class="action-row">
+        <button id="reset-button" type="button">Reset Filters</button>
+      </div>
+    </section>
+
+    <section class="results-layout">
+      <article class="result-card">
+        <div class="result-head">
+          <div>
+            <p class="result-label">Selected Car</p>
+            <h2 id="result-title">Choose a car to view pricing</h2>
+          </div>
+          <span class="chip" id="result-chip">Waiting for selection</span>
+        </div>
+
+        <div class="summary-grid">
+          <div class="price-box accent">
+            <p>Ex-Showroom</p>
+            <strong id="ex-showroom">-</strong>
+          </div>
+          <div class="price-box">
+            <p>On Road Price</p>
+            <strong id="on-road-basic">-</strong>
+          </div>
+          <div class="price-box">
+            <p>Value Package Price</p>
+            <strong id="on-road-value">-</strong>
+          </div>
+        </div>
+
+        <div class="detail-grid" id="detail-grid">
+          <div class="detail-item"><span>Fuel Type</span><strong id="fuel-type">-</strong></div>
+          <div class="detail-item"><span>Transmission</span><strong id="transmission-type">-</strong></div>
+          <div class="detail-item"><span>Road Tax</span><strong id="road-tax">-</strong></div>
+          <div class="detail-item"><span>TCS</span><strong id="tcs">-</strong></div>
+          <div class="detail-item"><span>Insurance</span><strong id="insurance">-</strong></div>
+          <div class="detail-item"><span>Fastag</span><strong id="fastag">-</strong></div>
+          <div class="detail-item"><span>LE / Mandatory Kit</span><strong id="le-kit">-</strong></div>
+          <div class="detail-item"><span>Other Misc Charges</span><strong id="misc-charges">-</strong></div>
+          <div class="detail-item"><span>Extended Warranty</span><strong id="extended-warranty">-</strong></div>
+          <div class="detail-item"><span>Accessory Kit</span><strong id="accessory-kit">-</strong></div>
+          <div class="detail-item"><span>Dash Cam</span><strong id="dash-cam">-</strong></div>
+          <div class="detail-item"><span>Gloss Studio</span><strong id="gloss-studio">-</strong></div>
+        </div>
+
+        <p class="section-note" id="record-note">Pick a matching record to see the complete price breakup.</p>
+      </article>
+
+      <aside class="side-card">
+        <p class="result-label">Matching Records</p>
+        <strong class="match-count" id="match-count">0</strong>
+        <p class="side-copy">
+          The dropdowns filter each other, so once you pick a model, only matching fuel
+          types and variants stay available.
+        </p>
+        <div class="side-list" id="match-list"></div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="data/cars.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
