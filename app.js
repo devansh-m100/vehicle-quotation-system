@@ -10,6 +10,7 @@ const hybridToneLabel = document.getElementById("hybrid-tone-label");
 const totalRecords = document.getElementById("total-records");
 const matchCount = document.getElementById("match-count");
 const filtersMatchCount = document.getElementById("filters-match-count");
+const filtersHeadingMatchCount = document.getElementById("filters-heading-match-count");
 const matchList = document.getElementById("match-list");
 
 const resultTitle = document.getElementById("result-title");
@@ -254,6 +255,7 @@ function syncAvailableOptions() {
 function renderMatches(filteredRecords) {
   matchCount.textContent = String(filteredRecords.length);
   filtersMatchCount.textContent = String(filteredRecords.length);
+  filtersHeadingMatchCount.textContent = String(filteredRecords.length);
   matchList.innerHTML = "";
 
   if (!filteredRecords.length) {
