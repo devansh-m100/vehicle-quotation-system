@@ -60,6 +60,29 @@ git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
 git push -u origin main
 ```
 
+## How to Make It Public on the Internet
+
+The easiest option for this project is `GitHub Pages`.
+
+After you push the code to GitHub:
+
+1. Open your repository on GitHub.
+2. Go to `Settings`.
+3. Open `Pages`.
+4. Under `Build and deployment`, choose:
+   - `Source`: `Deploy from a branch`
+   - `Branch`: `main`
+   - `Folder`: `/ (root)`
+5. Click `Save`.
+
+GitHub will give you a public link like:
+
+```text
+https://YOUR_USERNAME.github.io/YOUR_REPO_NAME/
+```
+
+Anyone with that link can open and use the website in their browser.
+
 ## Notes
 
 - The current dataset is manually seeded from the uploaded Toyota price-list images.
