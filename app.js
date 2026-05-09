@@ -4,10 +4,6 @@ const hybridToneInput = document.getElementById("hybrid-tone-input");
 const variantInput = document.getElementById("variant-input");
 const resetButton = document.getElementById("reset-button");
 
-const modelOptions = document.getElementById("model-options");
-const fuelOptions = document.getElementById("fuel-options");
-const hybridToneOptions = document.getElementById("hybrid-tone-options");
-const variantOptions = document.getElementById("variant-options");
 const hybridToneField = document.getElementById("hybrid-tone-field");
 const hybridToneLabel = document.getElementById("hybrid-tone-label");
 
@@ -38,6 +34,8 @@ const detailTargets = {
 };
 
 const records = window.CAR_DATA ?? [];
+const filterInputs = [modelInput, fuelInput, hybridToneInput, variantInput];
+
 totalRecords.textContent = `${records.length} variants`;
 
 function formatPrice(value) {
@@ -52,26 +50,46 @@ function isValidOption(value, options) {
   return !value || options.includes(value);
 }
 
-function buildOptions(datalist, values) {
-  datalist.innerHTML = "";
+function getPlaceholder(select, fallback) {
+  return select.dataset.placeholder || fallback;
+}
+
+function buildOptions(select, values, placeholder) {
+  const currentValue = select.value;
+  select.innerHTML = "";
+
+  const placeholderOption = document.createElement("option");
+  placeholderOption.value = "";
+  placeholderOption.textContent = placeholder;
+  placeholderOption.disabled = true;
+  placeholderOption.hidden = true;
+  select.appendChild(placeholderOption);
+
   values.forEach((value) => {
     const option = document.createElement("option");
     option.value = value;
-    datalist.appendChild(option);
+    option.textContent = value;
+    select.appendChild(option);
   });
+
+  select.value = isValidOption(currentValue, values) ? currentValue : "";
+
+  if (!select.value) {
+    placeholderOption.selected = true;
+  }
 }
 
-function getFilteredRecords() {
-  const specialFilterConfig = getSpecialFilterConfig();
-  return records.filter((record) => {
-    const matchesModel = !modelInput.value || record.modelName === modelInput.value;
-    const matchesFuel = !fuelInput.value || record.fuelType === fuelInput.value;
-    const matchesSpecialFilter = !specialFilterConfig
-      || !hybridToneInput.value
-      || record[specialFilterConfig.property] === hybridToneInput.value;
-    const matchesVariant = !variantInput.value || record.variant === variantInput.value;
-    return matchesModel && matchesFuel && matchesSpecialFilter && matchesVariant;
-  });
+function syncSelect(select, values, fallbackPlaceholder) {
+  const placeholder = getPlaceholder(select, fallbackPlaceholder);
+  buildOptions(select, values, placeholder);
+
+  if (values.length === 1) {
+    select.value = values[0];
+    select.options[0].textContent = `Only ${values[0]}`;
+    return;
+  }
+
+  select.options[0].textContent = placeholder;
 }
 
 function getSpecialFilterConfig() {
@@ -100,49 +118,36 @@ function getSpecialFilterConfig() {
   return null;
 }
 
-function normalizeSingleChoiceFuel(availableFuels) {
-  if (availableFuels.length === 1) {
-    fuelInput.value = availableFuels[0];
-    fuelInput.placeholder = `Only ${availableFuels[0]}`;
-    return;
-  }
+function getFilteredRecords() {
+  const specialFilterConfig = getSpecialFilterConfig();
 
-  if (!availableFuels.length) {
-    fuelInput.value = "";
-    fuelInput.placeholder = "Choose fuel type";
-    return;
-  }
+  return records.filter((record) => {
+    const matchesModel = !modelInput.value || record.modelName === modelInput.value;
+    const matchesFuel = !fuelInput.value || record.fuelType === fuelInput.value;
+    const matchesSpecialFilter = !specialFilterConfig
+      || !hybridToneInput.value
+      || record[specialFilterConfig.property] === hybridToneInput.value;
+    const matchesVariant = !variantInput.value || record.variant === variantInput.value;
 
-  fuelInput.placeholder = "Choose fuel type";
+    return matchesModel && matchesFuel && matchesSpecialFilter && matchesVariant;
+  });
 }
 
-function syncHybridToneField(availableHybridToneTypes) {
-  const specialFilterConfig = getSpecialFilterConfig();
+function syncHybridToneField(availableHybridToneTypes, specialFilterConfig) {
   const showHybridTone = Boolean(specialFilterConfig);
   hybridToneField.classList.toggle("is-hidden", !showHybridTone);
 
   if (!showHybridTone || !specialFilterConfig) {
     hybridToneInput.value = "";
+    hybridToneInput.dataset.placeholder = "Choose hybrid type";
     hybridToneLabel.textContent = "Normal or Dual Tone Hybrid";
-    hybridToneInput.placeholder = "Choose hybrid type";
-    hybridToneOptions.innerHTML = "";
+    syncSelect(hybridToneInput, [], "Choose hybrid type");
     return;
   }
 
   hybridToneLabel.textContent = specialFilterConfig.label;
-
-  if (!isValidOption(hybridToneInput.value, availableHybridToneTypes)) {
-    hybridToneInput.value = "";
-  }
-
-  if (availableHybridToneTypes.length === 1) {
-    hybridToneInput.value = availableHybridToneTypes[0];
-    hybridToneInput.placeholder = `Only ${availableHybridToneTypes[0]}`;
-  } else {
-    hybridToneInput.placeholder = specialFilterConfig.placeholder;
-  }
-
-  buildOptions(hybridToneOptions, availableHybridToneTypes);
+  hybridToneInput.dataset.placeholder = specialFilterConfig.placeholder;
+  syncSelect(hybridToneInput, availableHybridToneTypes, specialFilterConfig.placeholder);
 }
 
 function syncAvailableOptions() {
@@ -153,39 +158,54 @@ function syncAvailableOptions() {
       .filter((record) => !modelInput.value || record.modelName === modelInput.value)
       .map((record) => record.fuelType)
   );
-  const availableHybridToneTypes = uniqueValues(
-    records
-      .filter((record) => !modelInput.value || record.modelName === modelInput.value)
-      .filter((record) => !fuelInput.value || record.fuelType === fuelInput.value)
-      .map((record) => specialFilterConfig ? record[specialFilterConfig.property] : null)
-      .filter(Boolean)
-  );
-  const availableVariants = uniqueValues(
-    records
-      .filter((record) => (!modelInput.value || record.modelName === modelInput.value))
-      .filter((record) => (!fuelInput.value || record.fuelType === fuelInput.value))
-      .filter((record) => (!specialFilterConfig || !hybridToneInput.value || record[specialFilterConfig.property] === hybridToneInput.value))
-      .map((record) => record.variant)
-  );
 
   if (!isValidOption(modelInput.value, availableModels)) {
     modelInput.value = "";
   }
 
+  syncSelect(modelInput, availableModels, "Choose model");
+
   if (!isValidOption(fuelInput.value, availableFuels)) {
     fuelInput.value = "";
   }
 
-  normalizeSingleChoiceFuel(availableFuels);
-  syncHybridToneField(availableHybridToneTypes);
+  syncSelect(fuelInput, availableFuels, "Choose fuel type");
+
+  const refreshedSpecialFilterConfig = getSpecialFilterConfig();
+  const availableHybridToneTypes = uniqueValues(
+    records
+      .filter((record) => !modelInput.value || record.modelName === modelInput.value)
+      .filter((record) => !fuelInput.value || record.fuelType === fuelInput.value)
+      .map((record) => refreshedSpecialFilterConfig ? record[refreshedSpecialFilterConfig.property] : null)
+      .filter(Boolean)
+  );
+
+  if (
+    refreshedSpecialFilterConfig
+    && !isValidOption(hybridToneInput.value, availableHybridToneTypes)
+  ) {
+    hybridToneInput.value = "";
+  }
+
+  syncHybridToneField(availableHybridToneTypes, refreshedSpecialFilterConfig);
+
+  const availableVariants = uniqueValues(
+    records
+      .filter((record) => !modelInput.value || record.modelName === modelInput.value)
+      .filter((record) => !fuelInput.value || record.fuelType === fuelInput.value)
+      .filter((record) => (
+        !refreshedSpecialFilterConfig
+        || !hybridToneInput.value
+        || record[refreshedSpecialFilterConfig.property] === hybridToneInput.value
+      ))
+      .map((record) => record.variant)
+  );
 
   if (!isValidOption(variantInput.value, availableVariants)) {
     variantInput.value = "";
   }
 
-  buildOptions(modelOptions, availableModels);
-  buildOptions(fuelOptions, availableFuels);
-  buildOptions(variantOptions, availableVariants);
+  syncSelect(variantInput, availableVariants, "Choose variant");
 }
 
 function renderMatches(filteredRecords) {
@@ -195,7 +215,7 @@ function renderMatches(filteredRecords) {
   if (!filteredRecords.length) {
     const empty = document.createElement("div");
     empty.className = "side-pill";
-    empty.innerHTML = "<strong>No matching record</strong><span>Try resetting the filters.</span>";
+    empty.innerHTML = "<strong>No matching record</strong><span>Try adjusting any filter.</span>";
     matchList.appendChild(empty);
     return;
   }
@@ -256,16 +276,14 @@ function updateUI() {
   renderRecord(exactMatch || null);
 }
 
-[modelInput, fuelInput, hybridToneInput, variantInput].forEach((input) => {
-  input.addEventListener("input", updateUI);
+filterInputs.forEach((input) => {
   input.addEventListener("change", updateUI);
 });
 
 resetButton.addEventListener("click", () => {
-  modelInput.value = "";
-  fuelInput.value = "";
-  hybridToneInput.value = "";
-  variantInput.value = "";
+  filterInputs.forEach((input) => {
+    input.value = "";
+  });
   updateUI();
 });
 

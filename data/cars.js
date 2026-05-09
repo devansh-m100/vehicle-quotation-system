@@ -1320,7 +1320,7 @@ window.CAR_DATA = [
     onRoadValue: "11,03,656"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Hybrid",
     hybridToneType: "Normal Hybrid",
     variant: "S e-Drv HYB U6",
@@ -1341,7 +1341,7 @@ window.CAR_DATA = [
     onRoadValue: "22,05,435"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Hybrid",
     hybridToneType: "Normal Hybrid",
     variant: "G e-Drv HYB U5",
@@ -1362,7 +1362,7 @@ window.CAR_DATA = [
     onRoadValue: "24,51,401"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Hybrid",
     hybridToneType: "Normal Hybrid",
     variant: "V e-Drv HYB U4",
@@ -1383,7 +1383,7 @@ window.CAR_DATA = [
     onRoadValue: "26,01,838"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Hybrid",
     hybridToneType: "Dual Tone Hybrid",
     variant: "G e-Drv HYB U5",
@@ -1404,7 +1404,7 @@ window.CAR_DATA = [
     onRoadValue: "24,79,283"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Hybrid",
     hybridToneType: "Dual Tone Hybrid",
     variant: "V e-Drv HYB U4",
@@ -1425,7 +1425,7 @@ window.CAR_DATA = [
     onRoadValue: "26,49,546"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Petrol",
     petrolDriveType: "Neo Drive Manual Transmission",
     variant: "E MT 2WD BH",
@@ -1446,7 +1446,7 @@ window.CAR_DATA = [
     onRoadValue: "15,10,723"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Petrol",
     petrolDriveType: "Neo Drive Manual Transmission",
     variant: "S MT 2WD BG",
@@ -1467,7 +1467,7 @@ window.CAR_DATA = [
     onRoadValue: "16,94,117"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Petrol",
     petrolDriveType: "Neo Drive Manual Transmission",
     variant: "G MT 2WD BE",
@@ -1488,7 +1488,7 @@ window.CAR_DATA = [
     onRoadValue: "19,38,346"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Petrol",
     petrolDriveType: "Dual Tone Neo Drive",
     variant: "V MT 2WD BB",
@@ -1509,7 +1509,7 @@ window.CAR_DATA = [
     onRoadValue: "21,38,578"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Petrol",
     petrolDriveType: "Neo Drive Automatic Transmission",
     variant: "S 2WD BF",
@@ -1530,7 +1530,7 @@ window.CAR_DATA = [
     onRoadValue: "18,52,670"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Petrol",
     petrolDriveType: "Neo Drive Automatic Transmission",
     variant: "G 2WD BD",
@@ -1551,7 +1551,7 @@ window.CAR_DATA = [
     onRoadValue: "20,81,384"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Petrol",
     petrolDriveType: "Neo Drive Automatic Transmission",
     variant: "V 2WD BA",
@@ -1572,7 +1572,7 @@ window.CAR_DATA = [
     onRoadValue: "22,63,283"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Petrol",
     petrolDriveType: "Neo Drive Automatic Transmission",
     variant: "V 4WD BC",
@@ -1593,7 +1593,7 @@ window.CAR_DATA = [
     onRoadValue: "24,33,878"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Petrol",
     petrolDriveType: "Dual Tone Neo Drive",
     variant: "V AT 2WD BA",
@@ -1614,7 +1614,7 @@ window.CAR_DATA = [
     onRoadValue: "22,87,484"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Petrol",
     petrolDriveType: "Dual Tone Neo Drive",
     variant: "V AT 4WD BC",
@@ -1635,7 +1635,7 @@ window.CAR_DATA = [
     onRoadValue: "24,51,976"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Petrol",
     petrolDriveType: "Dual Tone Premium",
     variant: "G MT NEO DRIVE BE",
@@ -1656,7 +1656,7 @@ window.CAR_DATA = [
     onRoadValue: "19,61,183"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "Petrol",
     petrolDriveType: "Dual Tone Premium",
     variant: "G AT BD",
@@ -1677,7 +1677,7 @@ window.CAR_DATA = [
     onRoadValue: "21,04,994"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "CNG",
     variant: "S MT 2WD C8",
     transmissionType: "MT",
@@ -1697,7 +1697,7 @@ window.CAR_DATA = [
     onRoadValue: "17,56,669"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "CNG",
     variant: "G MT 2WD C7",
     transmissionType: "MT",
@@ -1717,7 +1717,7 @@ window.CAR_DATA = [
     onRoadValue: "19,84,893"
   },
   {
-    modelName: "Urban Cruiser Hyryder",
+    modelName: "Hyryder",
     fuelType: "CNG",
     variant: "e CNG (Dual Tone)",
     transmissionType: "CNG",

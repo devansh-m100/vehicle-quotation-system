@@ -30,26 +30,30 @@
     <section class="search-panel">
       <div class="search-field">
         <label for="model-input">Model Name</label>
-        <input id="model-input" list="model-options" placeholder="Start typing a model">
-        <datalist id="model-options"></datalist>
+        <select id="model-input" data-placeholder="Choose model">
+          <option value="" selected disabled hidden>Choose model</option>
+        </select>
       </div>
 
       <div class="search-field">
         <label for="fuel-input">Fuel Type</label>
-        <input id="fuel-input" list="fuel-options" placeholder="Choose fuel type">
-        <datalist id="fuel-options"></datalist>
+        <select id="fuel-input" data-placeholder="Choose fuel type">
+          <option value="" selected disabled hidden>Choose fuel type</option>
+        </select>
       </div>
 
       <div class="search-field hybrid-tone-field is-hidden" id="hybrid-tone-field">
         <label for="hybrid-tone-input" id="hybrid-tone-label">Normal or Dual Tone Hybrid</label>
-        <input id="hybrid-tone-input" list="hybrid-tone-options" placeholder="Choose hybrid type">
-        <datalist id="hybrid-tone-options"></datalist>
+        <select id="hybrid-tone-input" data-placeholder="Choose hybrid type">
+          <option value="" selected disabled hidden>Choose hybrid type</option>
+        </select>
       </div>
 
       <div class="search-field">
         <label for="variant-input">Variant</label>
-        <input id="variant-input" list="variant-options" placeholder="Choose variant">
-        <datalist id="variant-options"></datalist>
+        <select id="variant-input" data-placeholder="Choose variant">
+          <option value="" selected disabled hidden>Choose variant</option>
+        </select>
       </div>
 
       <div class="action-row">

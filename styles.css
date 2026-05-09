@@ -132,6 +132,7 @@ body {
 }
 
 .search-field input,
+.search-field select,
 .action-row button {
   width: 100%;
   height: 52px;
@@ -143,6 +144,7 @@ body {
 }
 
 .search-field input:focus,
+.search-field select:focus,
 .action-row button:focus {
   outline: 2px solid rgba(223, 32, 39, 0.22);
   border-color: rgba(223, 32, 39, 0.36);
