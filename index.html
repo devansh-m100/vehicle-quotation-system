@@ -13,7 +13,7 @@
   <main class="page-shell">
     <section class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">Rajyog Toyota</p>
+        <p class="eyebrow">Tasmayi Motors</p>
         <h1>Car Price Finder</h1>
         <p class="hero-text">
           Search by model name, fuel type, and variant to instantly view the matching
@@ -23,7 +23,7 @@
       <div class="hero-card">
         <p class="hero-card-label">Dataset</p>
         <p class="hero-card-value" id="total-records">0 variants</p>
-        <p class="hero-card-note">Seeded from your Toyota price-list images dated 07-Apr-2026.</p>
+        <p class="hero-card-note">As per latest data updated on 07-Apr-2026.</p>
       </div>
     </section>
 
@@ -42,7 +42,7 @@
 
       <div class="search-field">
         <label for="variant-input">Variant</label>
-        <input id="variant-input" list="variant-options" placeholder="Search variant">
+        <input id="variant-input" list="variant-options" placeholder="Choose variant">
         <datalist id="variant-options"></datalist>
       </div>
 
@@ -62,33 +62,42 @@
         </div>
 
         <div class="summary-grid">
-          <div class="price-box accent">
-            <p>Ex-Showroom</p>
+          <div class="price-box summary-ex-showroom">
+            <p>Ex-Showroom Price</p>
             <strong id="ex-showroom">-</strong>
           </div>
-          <div class="price-box">
+          <div class="price-box summary-on-road">
             <p>On Road Price</p>
             <strong id="on-road-basic">-</strong>
           </div>
-          <div class="price-box">
-            <p>Value Package Price</p>
+          <div class="price-box summary-value-package">
+            <p>On Road Price with Value Package Added</p>
             <strong id="on-road-value">-</strong>
           </div>
         </div>
 
-        <div class="detail-grid" id="detail-grid">
-          <div class="detail-item"><span>Fuel Type</span><strong id="fuel-type">-</strong></div>
-          <div class="detail-item"><span>Transmission</span><strong id="transmission-type">-</strong></div>
-          <div class="detail-item"><span>Road Tax</span><strong id="road-tax">-</strong></div>
-          <div class="detail-item"><span>TCS</span><strong id="tcs">-</strong></div>
-          <div class="detail-item"><span>Insurance</span><strong id="insurance">-</strong></div>
-          <div class="detail-item"><span>Fastag</span><strong id="fastag">-</strong></div>
-          <div class="detail-item"><span>LE / Mandatory Kit</span><strong id="le-kit">-</strong></div>
-          <div class="detail-item"><span>Other Misc Charges</span><strong id="misc-charges">-</strong></div>
-          <div class="detail-item"><span>Extended Warranty</span><strong id="extended-warranty">-</strong></div>
-          <div class="detail-item"><span>Accessory Kit</span><strong id="accessory-kit">-</strong></div>
-          <div class="detail-item"><span>Dash Cam</span><strong id="dash-cam">-</strong></div>
-          <div class="detail-item"><span>Gloss Studio</span><strong id="gloss-studio">-</strong></div>
+        <div class="details-section">
+          <p class="subsection-label">Basic Price Details</p>
+          <div class="detail-grid" id="detail-grid">
+            <div class="detail-item"><span>Fuel Type</span><strong id="fuel-type">-</strong></div>
+            <div class="detail-item"><span>Transmission</span><strong id="transmission-type">-</strong></div>
+            <div class="detail-item"><span>Road Tax</span><strong id="road-tax">-</strong></div>
+            <div class="detail-item"><span>TCS</span><strong id="tcs">-</strong></div>
+            <div class="detail-item"><span>Insurance</span><strong id="insurance">-</strong></div>
+            <div class="detail-item"><span>Fastag</span><strong id="fastag">-</strong></div>
+            <div class="detail-item"><span>LE / Mandatory Kit</span><strong id="le-kit">-</strong></div>
+            <div class="detail-item"><span>Other Misc Charges</span><strong id="misc-charges">-</strong></div>
+          </div>
+        </div>
+
+        <div class="value-package-panel">
+          <p class="subsection-label value-package-label">Value Package Items</p>
+          <div class="value-package-grid">
+            <div class="detail-item value-package-item"><span>Extended Warranty</span><strong id="extended-warranty">-</strong></div>
+            <div class="detail-item value-package-item"><span>Accessory Kit</span><strong id="accessory-kit">-</strong></div>
+            <div class="detail-item value-package-item"><span>Dash Cam</span><strong id="dash-cam">-</strong></div>
+            <div class="detail-item value-package-item"><span>Gloss Studio</span><strong id="gloss-studio">-</strong></div>
+          </div>
         </div>
 
         <p class="section-note" id="record-note">Pick a matching record to see the complete price breakup.</p>

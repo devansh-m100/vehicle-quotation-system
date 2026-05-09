@@ -66,6 +66,22 @@ function getFilteredRecords() {
   });
 }
 
+function normalizeSingleChoiceFuel(availableFuels) {
+  if (availableFuels.length === 1) {
+    fuelInput.value = availableFuels[0];
+    fuelInput.placeholder = `Only ${availableFuels[0]}`;
+    return;
+  }
+
+  if (!availableFuels.length) {
+    fuelInput.value = "";
+    fuelInput.placeholder = "Choose fuel type";
+    return;
+  }
+
+  fuelInput.placeholder = "Choose fuel type";
+}
+
 function syncAvailableOptions() {
   const availableModels = uniqueValues(records.map((record) => record.modelName));
   const availableFuels = uniqueValues(
@@ -87,6 +103,8 @@ function syncAvailableOptions() {
   if (!isValidOption(fuelInput.value, availableFuels)) {
     fuelInput.value = "";
   }
+
+  normalizeSingleChoiceFuel(availableFuels);
 
   if (!isValidOption(variantInput.value, availableVariants)) {
     variantInput.value = "";
