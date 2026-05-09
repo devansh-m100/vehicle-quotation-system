@@ -10,6 +10,8 @@ const hybridToneLabel = document.getElementById("hybrid-tone-label");
 const totalRecords = document.getElementById("total-records");
 const matchCount = document.getElementById("match-count");
 const matchList = document.getElementById("match-list");
+const filtersMatchCount = document.getElementById("filters-match-count");
+const actionMatchCount = document.getElementById("action-match-count");
 
 const resultTitle = document.getElementById("result-title");
 const resultChip = document.getElementById("result-chip");
@@ -40,6 +42,10 @@ totalRecords.textContent = `${records.length} variants`;
 
 function formatPrice(value) {
   return value && value !== "0" ? `Rs. ${value}` : value === "0" ? "Rs. 0" : "-";
+}
+
+function formatMatchLabel(count) {
+  return `${count} ${count === 1 ? "match" : "matches"}`;
 }
 
 function uniqueValues(values) {
@@ -209,7 +215,11 @@ function syncAvailableOptions() {
 }
 
 function renderMatches(filteredRecords) {
+  const matchLabel = formatMatchLabel(filteredRecords.length);
+
   matchCount.textContent = String(filteredRecords.length);
+  filtersMatchCount.textContent = matchLabel;
+  actionMatchCount.textContent = matchLabel;
   matchList.innerHTML = "";
 
   if (!filteredRecords.length) {
