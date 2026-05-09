@@ -115,26 +115,11 @@ body {
 }
 
 .filters-heading {
-  margin: 0;
+  margin: 22px 0 10px;
   font-family: "Space Grotesk", sans-serif;
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--ink-blue);
-}
-
-.filters-header {
-  margin: 22px 0 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.filters-match-count,
-.action-match-count {
-  color: var(--ink-blue);
-  font-weight: 700;
-  white-space: nowrap;
 }
 
 .search-panel {
@@ -183,10 +168,7 @@ body {
 
 .action-row {
   grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 14px;
+  justify-self: end;
 }
 
 .is-hidden {
@@ -404,12 +386,6 @@ body {
   .detail-grid,
   .value-package-grid {
     grid-template-columns: 1fr;
-  }
-
-  .filters-header,
-  .action-row {
-    flex-direction: column;
-    align-items: flex-start;
   }
 
   .action-row button {

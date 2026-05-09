@@ -10,8 +10,6 @@ const hybridToneLabel = document.getElementById("hybrid-tone-label");
 const totalRecords = document.getElementById("total-records");
 const matchCount = document.getElementById("match-count");
 const matchList = document.getElementById("match-list");
-const filtersMatchCount = document.getElementById("filters-match-count");
-const actionMatchCount = document.getElementById("action-match-count");
 
 const resultTitle = document.getElementById("result-title");
 const resultChip = document.getElementById("result-chip");
@@ -215,11 +213,7 @@ function syncAvailableOptions() {
 }
 
 function renderMatches(filteredRecords) {
-  const matchLabel = formatMatchLabel(filteredRecords.length);
-
   matchCount.textContent = String(filteredRecords.length);
-  filtersMatchCount.textContent = matchLabel;
-  actionMatchCount.textContent = matchLabel;
   matchList.innerHTML = "";
 
   if (!filteredRecords.length) {
