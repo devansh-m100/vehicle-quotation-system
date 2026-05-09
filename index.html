@@ -14,7 +14,7 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">Tasmayi Motors</p>
-        <h1>Car Price Finder</h1>
+        <h1>Car Quotation Calculator</h1>
         <p class="hero-text">
           Search by model name, fuel type, and variant to instantly view the matching
           price details from your uploaded price sheets.
@@ -77,6 +77,13 @@
           <span class="chip" id="result-chip">Waiting for selection</span>
         </div>
 
+        <div class="export-actions">
+          <button id="download-image-button" type="button" class="export-button" disabled>Download Image</button>
+          <button id="download-pdf-button" type="button" class="export-button" disabled>Download PDF</button>
+          <button id="share-image-button" type="button" class="export-button export-button-share" disabled>Share Image</button>
+          <button id="share-pdf-button" type="button" class="export-button export-button-share" disabled>Share PDF</button>
+        </div>
+
         <div class="summary-grid">
           <div class="price-box summary-ex-showroom">
             <p>Ex-Showroom Price</p>
@@ -132,6 +139,8 @@
   </main>
 
   <script src="data/cars.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

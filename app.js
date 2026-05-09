@@ -3,6 +3,10 @@ const fuelInput = document.getElementById("fuel-input");
 const hybridToneInput = document.getElementById("hybrid-tone-input");
 const variantInput = document.getElementById("variant-input");
 const resetButton = document.getElementById("reset-button");
+const downloadImageButton = document.getElementById("download-image-button");
+const downloadPdfButton = document.getElementById("download-pdf-button");
+const shareImageButton = document.getElementById("share-image-button");
+const sharePdfButton = document.getElementById("share-pdf-button");
 
 const hybridToneField = document.getElementById("hybrid-tone-field");
 const hybridToneLabel = document.getElementById("hybrid-tone-label");
@@ -16,6 +20,7 @@ const matchList = document.getElementById("match-list");
 const resultTitle = document.getElementById("result-title");
 const resultChip = document.getElementById("result-chip");
 const recordNote = document.getElementById("record-note");
+const resultCard = document.querySelector(".result-card");
 
 const detailTargets = {
   exShowroom: document.getElementById("ex-showroom"),
@@ -37,15 +42,12 @@ const detailTargets = {
 
 const records = window.CAR_DATA ?? [];
 const filterInputs = [modelInput, fuelInput, hybridToneInput, variantInput];
+let selectedRecord = null;
 
 totalRecords.textContent = `${records.length} variants`;
 
 function formatPrice(value) {
   return value && value !== "0" ? `Rs. ${value}` : value === "0" ? "Rs. 0" : "-";
-}
-
-function formatMatchLabel(count) {
-  return `${count} ${count === 1 ? "match" : "matches"}`;
 }
 
 function uniqueValues(values) {
@@ -223,11 +225,7 @@ function syncAvailableOptions() {
   const canShowVariants = hasFuelSelection && !needsSpecialFilterSelection;
   let variantPlaceholder = "Choose variant";
 
-  if (!hasModelSelection) {
-    variantPlaceholder = "Select previous filter first";
-  } else if (!hasFuelSelection) {
-    variantPlaceholder = "Select previous filter first";
-  } else if (needsSpecialFilterSelection) {
+  if (!hasModelSelection || !hasFuelSelection || needsSpecialFilterSelection) {
     variantPlaceholder = "Select previous filter first";
   }
 
@@ -270,18 +268,232 @@ function renderMatches(filteredRecords) {
     const pill = document.createElement("div");
     pill.className = "side-pill";
     pill.innerHTML = `
-      <strong>${record.modelName} • ${record.variant}</strong>
-      <span>${record.fuelType} • ${record.transmissionType} • On road ${formatPrice(record.onRoadBasic)}</span>
+      <strong>${record.modelName} | ${record.variant}</strong>
+      <span>${record.fuelType} | ${record.transmissionType} | On road ${formatPrice(record.onRoadBasic)}</span>
     `;
     matchList.appendChild(pill);
   });
 }
 
+function createFileSafeName(value) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function buildExportFileName(record) {
+  return `${createFileSafeName(record.modelName)}-${createFileSafeName(record.variant)}`;
+}
+
+function setExportButtonsDisabled(disabled) {
+  [downloadImageButton, downloadPdfButton, shareImageButton, sharePdfButton].forEach((button) => {
+    button.disabled = disabled;
+  });
+}
+
+async function captureSelectedCarCard(scale = 2) {
+  if (!selectedRecord) {
+    throw new Error("Select a car before exporting.");
+  }
+
+  if (!window.html2canvas) {
+    throw new Error("Image export library not available.");
+  }
+
+  return window.html2canvas(resultCard, {
+    backgroundColor: "#f8f5ef",
+    scale,
+    useCORS: true,
+    ignoreElements: (element) => element.classList?.contains("export-actions")
+  });
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function exportSelectedCarAsImage() {
+  const canvas = await captureSelectedCarCard(1.3);
+  const filename = `${buildExportFileName(selectedRecord)}.jpg`;
+
+  const blob = await new Promise((resolve) => {
+    canvas.toBlob(resolve, "image/jpeg", 0.78);
+  });
+
+  if (!blob) {
+    throw new Error("Could not create image file.");
+  }
+
+  downloadBlob(blob, filename);
+}
+
+async function exportSelectedCarAsPdf() {
+  if (!window.jspdf?.jsPDF) {
+    throw new Error("PDF export library not available.");
+  }
+
+  const canvas = await captureSelectedCarCard(1.3);
+  const imageData = canvas.toDataURL("image/jpeg", 0.78);
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({
+    orientation: canvas.width >= canvas.height ? "landscape" : "portrait",
+    unit: "px",
+    format: [canvas.width, canvas.height],
+    compress: true
+  });
+
+  pdf.addImage(imageData, "JPEG", 0, 0, canvas.width, canvas.height, undefined, "FAST");
+  pdf.save(`${buildExportFileName(selectedRecord)}.pdf`);
+}
+
+async function createSelectedCarPdfBlob() {
+  if (!window.jspdf?.jsPDF) {
+    throw new Error("PDF export library not available.");
+  }
+
+  const canvas = await captureSelectedCarCard(1.3);
+  const imageData = canvas.toDataURL("image/jpeg", 0.78);
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({
+    orientation: canvas.width >= canvas.height ? "landscape" : "portrait",
+    unit: "px",
+    format: [canvas.width, canvas.height],
+    compress: true
+  });
+
+  pdf.addImage(imageData, "JPEG", 0, 0, canvas.width, canvas.height, undefined, "FAST");
+
+  return pdf.output("blob");
+}
+
+function buildShareSummary() {
+  return [
+    `${selectedRecord.modelName} ${selectedRecord.variant}`,
+    `${selectedRecord.fuelType} | ${selectedRecord.transmissionType}`,
+    `Ex-Showroom: ${formatPrice(selectedRecord.exShowroom)}`,
+    `On Road: ${formatPrice(selectedRecord.onRoadBasic)}`,
+    `With Value Package: ${formatPrice(selectedRecord.onRoadValue)}`
+  ].join("\n");
+}
+
+async function shareSelectedCarImage() {
+  const summary = buildShareSummary();
+
+  if (navigator.share) {
+    try {
+      const canvas = await captureSelectedCarCard(1.3);
+      const blob = await new Promise((resolve) => {
+        canvas.toBlob(resolve, "image/jpeg", 0.78);
+      });
+
+      if (blob) {
+        const file = new File([blob], `${buildExportFileName(selectedRecord)}.jpg`, { type: "image/jpeg" });
+
+        if (navigator.canShare?.({ files: [file] })) {
+          await navigator.share({
+            title: `${selectedRecord.modelName} ${selectedRecord.variant}`,
+            text: summary,
+            files: [file]
+          });
+          return;
+        }
+      }
+
+      await navigator.share({
+        title: `${selectedRecord.modelName} ${selectedRecord.variant}`,
+        text: summary
+      });
+      return;
+    } catch (error) {
+      if (error?.name === "AbortError") {
+        return;
+      }
+    }
+  }
+
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(summary);
+    window.alert("Image sharing is not available here, so the selected car details were copied to your clipboard.");
+    return;
+  }
+
+  window.alert(summary);
+}
+
+async function shareSelectedCarPdf() {
+  const summary = buildShareSummary();
+
+  if (navigator.share) {
+    try {
+      const blob = await createSelectedCarPdfBlob();
+
+      if (blob) {
+        const file = new File([blob], `${buildExportFileName(selectedRecord)}.pdf`, { type: "application/pdf" });
+
+        if (navigator.canShare?.({ files: [file] })) {
+          await navigator.share({
+            title: `${selectedRecord.modelName} ${selectedRecord.variant}`,
+            text: summary,
+            files: [file]
+          });
+          return;
+        }
+      }
+
+      await navigator.share({
+        title: `${selectedRecord.modelName} ${selectedRecord.variant}`,
+        text: summary
+      });
+      return;
+    } catch (error) {
+      if (error?.name === "AbortError") {
+        return;
+      }
+    }
+  }
+
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(summary);
+    window.alert("PDF sharing is not available here, so the selected car details were copied to your clipboard.");
+    return;
+  }
+
+  window.alert(summary);
+}
+
+async function handleExport(action) {
+  if (!selectedRecord) {
+    window.alert("Select a car first.");
+    return;
+  }
+
+  setExportButtonsDisabled(true);
+
+  try {
+    await action();
+  } catch (error) {
+    window.alert(error.message || "Something went wrong while exporting.");
+  } finally {
+    setExportButtonsDisabled(false);
+  }
+}
+
 function renderRecord(record) {
+  selectedRecord = record || null;
+
   if (!record) {
     resultTitle.textContent = "Choose a car to view pricing";
     resultChip.textContent = "Waiting for selection";
     recordNote.textContent = "Pick a matching record to see the complete price breakup.";
+    setExportButtonsDisabled(true);
 
     Object.values(detailTargets).forEach((target) => {
       target.textContent = "-";
@@ -290,8 +502,9 @@ function renderRecord(record) {
   }
 
   resultTitle.textContent = `${record.modelName} ${record.variant}`;
-  resultChip.textContent = `${record.fuelType} • ${record.transmissionType}`;
+  resultChip.textContent = `${record.fuelType} | ${record.transmissionType}`;
   recordNote.textContent = record.note || "Price details loaded from dataset.";
+  setExportButtonsDisabled(false);
 
   detailTargets.exShowroom.textContent = formatPrice(record.exShowroom);
   detailTargets.onRoadBasic.textContent = formatPrice(record.onRoadBasic);
@@ -331,6 +544,22 @@ resetButton.addEventListener("click", () => {
     input.value = "";
   });
   updateUI();
+});
+
+downloadImageButton.addEventListener("click", () => {
+  handleExport(exportSelectedCarAsImage);
+});
+
+downloadPdfButton.addEventListener("click", () => {
+  handleExport(exportSelectedCarAsPdf);
+});
+
+shareImageButton.addEventListener("click", () => {
+  handleExport(shareSelectedCarImage);
+});
+
+sharePdfButton.addEventListener("click", () => {
+  handleExport(shareSelectedCarPdf);
 });
 
 updateUI();
