@@ -1,11 +1,15 @@
 const modelInput = document.getElementById("model-input");
 const fuelInput = document.getElementById("fuel-input");
+const hybridToneInput = document.getElementById("hybrid-tone-input");
 const variantInput = document.getElementById("variant-input");
 const resetButton = document.getElementById("reset-button");
 
 const modelOptions = document.getElementById("model-options");
 const fuelOptions = document.getElementById("fuel-options");
+const hybridToneOptions = document.getElementById("hybrid-tone-options");
 const variantOptions = document.getElementById("variant-options");
+const hybridToneField = document.getElementById("hybrid-tone-field");
+const hybridToneLabel = document.getElementById("hybrid-tone-label");
 
 const totalRecords = document.getElementById("total-records");
 const matchCount = document.getElementById("match-count");
@@ -58,12 +62,42 @@ function buildOptions(datalist, values) {
 }
 
 function getFilteredRecords() {
+  const specialFilterConfig = getSpecialFilterConfig();
   return records.filter((record) => {
     const matchesModel = !modelInput.value || record.modelName === modelInput.value;
     const matchesFuel = !fuelInput.value || record.fuelType === fuelInput.value;
+    const matchesSpecialFilter = !specialFilterConfig
+      || !hybridToneInput.value
+      || record[specialFilterConfig.property] === hybridToneInput.value;
     const matchesVariant = !variantInput.value || record.variant === variantInput.value;
-    return matchesModel && matchesFuel && matchesVariant;
+    return matchesModel && matchesFuel && matchesSpecialFilter && matchesVariant;
   });
+}
+
+function getSpecialFilterConfig() {
+  const isHyryder = modelInput.value.toLowerCase().includes("hyryder");
+
+  if (!isHyryder) {
+    return null;
+  }
+
+  if (fuelInput.value === "Hybrid") {
+    return {
+      label: "Normal or Dual Tone Hybrid",
+      placeholder: "Choose hybrid type",
+      property: "hybridToneType"
+    };
+  }
+
+  if (fuelInput.value === "Petrol") {
+    return {
+      label: "Neo Drive MT AT Dual Tone, etc",
+      placeholder: "Choose petrol type",
+      property: "petrolDriveType"
+    };
+  }
+
+  return null;
 }
 
 function normalizeSingleChoiceFuel(availableFuels) {
@@ -82,17 +116,55 @@ function normalizeSingleChoiceFuel(availableFuels) {
   fuelInput.placeholder = "Choose fuel type";
 }
 
+function syncHybridToneField(availableHybridToneTypes) {
+  const specialFilterConfig = getSpecialFilterConfig();
+  const showHybridTone = Boolean(specialFilterConfig);
+  hybridToneField.classList.toggle("is-hidden", !showHybridTone);
+
+  if (!showHybridTone || !specialFilterConfig) {
+    hybridToneInput.value = "";
+    hybridToneLabel.textContent = "Normal or Dual Tone Hybrid";
+    hybridToneInput.placeholder = "Choose hybrid type";
+    hybridToneOptions.innerHTML = "";
+    return;
+  }
+
+  hybridToneLabel.textContent = specialFilterConfig.label;
+
+  if (!isValidOption(hybridToneInput.value, availableHybridToneTypes)) {
+    hybridToneInput.value = "";
+  }
+
+  if (availableHybridToneTypes.length === 1) {
+    hybridToneInput.value = availableHybridToneTypes[0];
+    hybridToneInput.placeholder = `Only ${availableHybridToneTypes[0]}`;
+  } else {
+    hybridToneInput.placeholder = specialFilterConfig.placeholder;
+  }
+
+  buildOptions(hybridToneOptions, availableHybridToneTypes);
+}
+
 function syncAvailableOptions() {
+  const specialFilterConfig = getSpecialFilterConfig();
   const availableModels = uniqueValues(records.map((record) => record.modelName));
   const availableFuels = uniqueValues(
     records
       .filter((record) => !modelInput.value || record.modelName === modelInput.value)
       .map((record) => record.fuelType)
   );
+  const availableHybridToneTypes = uniqueValues(
+    records
+      .filter((record) => !modelInput.value || record.modelName === modelInput.value)
+      .filter((record) => !fuelInput.value || record.fuelType === fuelInput.value)
+      .map((record) => specialFilterConfig ? record[specialFilterConfig.property] : null)
+      .filter(Boolean)
+  );
   const availableVariants = uniqueValues(
     records
       .filter((record) => (!modelInput.value || record.modelName === modelInput.value))
       .filter((record) => (!fuelInput.value || record.fuelType === fuelInput.value))
+      .filter((record) => (!specialFilterConfig || !hybridToneInput.value || record[specialFilterConfig.property] === hybridToneInput.value))
       .map((record) => record.variant)
   );
 
@@ -105,6 +177,7 @@ function syncAvailableOptions() {
   }
 
   normalizeSingleChoiceFuel(availableFuels);
+  syncHybridToneField(availableHybridToneTypes);
 
   if (!isValidOption(variantInput.value, availableVariants)) {
     variantInput.value = "";
@@ -183,7 +256,7 @@ function updateUI() {
   renderRecord(exactMatch || null);
 }
 
-[modelInput, fuelInput, variantInput].forEach((input) => {
+[modelInput, fuelInput, hybridToneInput, variantInput].forEach((input) => {
   input.addEventListener("input", updateUI);
   input.addEventListener("change", updateUI);
 });
@@ -191,6 +264,7 @@ function updateUI() {
 resetButton.addEventListener("click", () => {
   modelInput.value = "";
   fuelInput.value = "";
+  hybridToneInput.value = "";
   variantInput.value = "";
   updateUI();
 });

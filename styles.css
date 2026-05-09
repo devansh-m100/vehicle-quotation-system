@@ -116,7 +116,7 @@ body {
 
 .search-panel {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
   margin-top: 22px;
   padding: 20px;
@@ -154,6 +154,15 @@ body {
   font-weight: 700;
   cursor: pointer;
   min-width: 148px;
+}
+
+.action-row {
+  grid-column: 1 / -1;
+  justify-self: end;
+}
+
+.is-hidden {
+  display: none;
 }
 
 .results-layout {
