@@ -354,6 +354,47 @@ body {
   text-align: right;
 }
 
+.price-edit-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.price-input {
+  width: 180px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  color: #1f2937;
+  text-align: right;
+}
+
+.price-input:focus {
+  outline: 0;
+  border-bottom: 2px solid rgba(223, 32, 39, 0.32);
+}
+
+.price-reset-button {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(15, 38, 54, 0.14);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink-blue);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.price-reset-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .total-card {
   margin-top: 30px;
   padding: 26px 20px;
@@ -460,6 +501,17 @@ body {
   color: var(--text);
 }
 
+.value-price-input {
+  width: 100%;
+  display: block;
+  font-size: 1.08rem;
+  text-align: left;
+}
+
+.value-reset-button {
+  margin-top: 10px;
+}
+
 .value-package-item {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 246, 246, 0.92));
   border-color: rgba(223, 32, 39, 0.16);
@@ -472,6 +524,14 @@ body {
 
 .value-package-item strong {
   color: var(--ink-blue);
+}
+
+.total-price-input {
+  width: 100%;
+  display: block;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(2rem, 3vw, 3rem);
+  text-align: center;
 }
 
 .visually-hidden {
@@ -550,5 +610,20 @@ body {
 
   .price-row strong {
     text-align: left;
+  }
+
+  .price-edit-group {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .price-input {
+    width: 100%;
+    text-align: left;
+  }
+
+  .price-reset-button {
+    width: fit-content;
   }
 }

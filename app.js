@@ -45,7 +45,21 @@ const detailTargets = {
 
 const records = window.CAR_DATA ?? [];
 const filterInputs = [modelInput, fuelInput, hybridToneInput, variantInput];
+const editablePriceInputs = [
+  detailTargets.exShowroom,
+  detailTargets.tcs,
+  detailTargets.roadTax,
+  detailTargets.fastag,
+  detailTargets.miscCharges,
+  detailTargets.insurance,
+  detailTargets.extendedWarranty,
+  detailTargets.accessoryKit,
+  detailTargets.dashCam,
+  detailTargets.glossStudio
+];
+const resetPriceButtons = [...document.querySelectorAll(".price-reset-button")];
 let selectedRecord = null;
+let originalQuotationValues = {};
 
 totalRecords.textContent = `${records.length} variants`;
 quotationDate.textContent = new Intl.DateTimeFormat("en-GB", {
@@ -56,6 +70,96 @@ quotationDate.textContent = new Intl.DateTimeFormat("en-GB", {
 
 function formatPrice(value) {
   return value && value !== "0" ? `₹${value}` : value === "0" ? "₹0" : "-";
+}
+
+function formatNumberAsPrice(value) {
+  if (!Number.isFinite(value)) {
+    return "-";
+  }
+
+  return `₹${new Intl.NumberFormat("en-IN").format(value)}`;
+}
+
+function parsePriceValue(value) {
+  if (!value) {
+    return 0;
+  }
+
+  const digits = String(value).replace(/[^\d.-]/g, "");
+  const parsed = Number(digits);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function setDisplayValue(target, value) {
+  if ("value" in target) {
+    target.value = value;
+    return;
+  }
+
+  target.textContent = value;
+}
+
+function captureQuotationValues() {
+  return Object.fromEntries(
+    editablePriceInputs.map((input) => [input.id, input.value])
+  );
+}
+
+function applyQuotationValues(values) {
+  editablePriceInputs.forEach((input) => {
+    if (Object.hasOwn(values, input.id)) {
+      input.value = values[input.id];
+    }
+  });
+}
+
+function syncResetButtonState(targetId) {
+  const button = resetPriceButtons.find((item) => item.dataset.resetTarget === targetId);
+  const input = editablePriceInputs.find((item) => item.id === targetId);
+
+  if (!button || !input || !Object.hasOwn(originalQuotationValues, targetId)) {
+    if (button) {
+      button.disabled = true;
+    }
+    return;
+  }
+
+  button.disabled = input.value === originalQuotationValues[targetId];
+}
+
+function syncAllResetButtonStates() {
+  resetPriceButtons.forEach((button) => {
+    syncResetButtonState(button.dataset.resetTarget);
+  });
+}
+
+function recalculateQuotationTotals() {
+  const basicTotal = [
+    detailTargets.exShowroom,
+    detailTargets.tcs,
+    detailTargets.roadTax,
+    detailTargets.fastag,
+    detailTargets.miscCharges,
+    detailTargets.insurance
+  ].reduce((sum, target) => sum + parsePriceValue(target.value), 0);
+
+  const valuePackageTotal = [
+    detailTargets.extendedWarranty,
+    detailTargets.accessoryKit,
+    detailTargets.dashCam,
+    detailTargets.glossStudio
+  ].reduce((sum, target) => sum + parsePriceValue(target.value), 0);
+
+  setDisplayValue(detailTargets.onRoadBasic, formatNumberAsPrice(basicTotal));
+  setDisplayValue(detailTargets.onRoadBasicRow, formatNumberAsPrice(basicTotal));
+  setDisplayValue(detailTargets.onRoadValue, formatNumberAsPrice(basicTotal + valuePackageTotal));
+  syncAllResetButtonStates();
+}
+
+function updateResetButtonsDisabled(disabled) {
+  resetPriceButtons.forEach((button) => {
+    button.disabled = disabled;
+  });
 }
 
 function uniqueValues(values) {
@@ -502,10 +606,13 @@ function renderRecord(record) {
     resultTitle.textContent = "Choose a car to view pricing";
     recordNote.textContent = "Note: Quotation valid for only 2 days from the above date.";
     setExportButtonsDisabled(true);
+    originalQuotationValues = {};
+    updateResetButtonsDisabled(true);
 
     Object.values(detailTargets).forEach((target) => {
-      target.textContent = "-";
+      setDisplayValue(target, "-");
     });
+    syncAllResetButtonStates();
     return;
   }
 
@@ -515,22 +622,24 @@ function renderRecord(record) {
   setExportButtonsDisabled(false);
 
   detailTargets.breakdownTransmission.textContent = record.transmissionType;
-  detailTargets.exShowroom.textContent = formatPrice(record.exShowroom);
-  detailTargets.onRoadBasic.textContent = formatPrice(record.onRoadBasic);
-  detailTargets.onRoadBasicRow.textContent = formatPrice(record.onRoadBasic);
-  detailTargets.onRoadValue.textContent = formatPrice(record.onRoadValue);
+  setDisplayValue(detailTargets.exShowroom, formatPrice(record.exShowroom));
+  setDisplayValue(detailTargets.onRoadBasic, formatPrice(record.onRoadBasic));
+  setDisplayValue(detailTargets.onRoadBasicRow, formatPrice(record.onRoadBasic));
+  setDisplayValue(detailTargets.onRoadValue, formatPrice(record.onRoadValue));
   detailTargets.fuelType.textContent = record.fuelType;
   detailTargets.transmissionType.textContent = record.transmissionType;
-  detailTargets.roadTax.textContent = formatPrice(record.roadTax);
-  detailTargets.tcs.textContent = formatPrice(record.tcs);
-  detailTargets.insurance.textContent = formatPrice(record.insurance);
-  detailTargets.fastag.textContent = formatPrice(record.fastag);
-  detailTargets.miscCharges.textContent = formatPrice(record.miscCharges);
-  detailTargets.leKit.textContent = formatPrice(record.leKit);
-  detailTargets.extendedWarranty.textContent = formatPrice(record.extendedWarranty);
-  detailTargets.accessoryKit.textContent = formatPrice(record.accessoryKit);
-  detailTargets.dashCam.textContent = formatPrice(record.dashCam);
-  detailTargets.glossStudio.textContent = formatPrice(record.glossStudio);
+  setDisplayValue(detailTargets.roadTax, formatPrice(record.roadTax));
+  setDisplayValue(detailTargets.tcs, formatPrice(record.tcs));
+  setDisplayValue(detailTargets.insurance, formatPrice(record.insurance));
+  setDisplayValue(detailTargets.fastag, formatPrice(record.fastag));
+  setDisplayValue(detailTargets.miscCharges, formatPrice(record.miscCharges));
+  setDisplayValue(detailTargets.leKit, formatPrice(record.leKit));
+  setDisplayValue(detailTargets.extendedWarranty, formatPrice(record.extendedWarranty));
+  setDisplayValue(detailTargets.accessoryKit, formatPrice(record.accessoryKit));
+  setDisplayValue(detailTargets.dashCam, formatPrice(record.dashCam));
+  setDisplayValue(detailTargets.glossStudio, formatPrice(record.glossStudio));
+  originalQuotationValues = captureQuotationValues();
+  recalculateQuotationTotals();
 }
 
 function updateUI() {
@@ -570,6 +679,31 @@ shareImageButton.addEventListener("click", () => {
 
 sharePdfButton.addEventListener("click", () => {
   handleExport(shareSelectedCarPdf);
+});
+
+editablePriceInputs.forEach((input) => {
+  input.addEventListener("input", recalculateQuotationTotals);
+});
+
+resetPriceButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const targetId = button.dataset.resetTarget;
+
+    if (!targetId || !Object.hasOwn(originalQuotationValues, targetId)) {
+      return;
+    }
+
+    const input = detailTargets[
+      Object.keys(detailTargets).find((key) => detailTargets[key]?.id === targetId)
+    ];
+
+    if (!input || !("value" in input)) {
+      return;
+    }
+
+    input.value = originalQuotationValues[targetId];
+    recalculateQuotationTotals();
+  });
 });
 
 updateUI();
