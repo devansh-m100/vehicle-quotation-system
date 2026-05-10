@@ -71,7 +71,7 @@ quotationDate.textContent = new Intl.DateTimeFormat("en-GB", {
 }).format(new Date());
 
 function formatPrice(value) {
-  return value && value !== "0" ? `₹${value}` : value === "0" ? "₹0" : "-";
+  return value && value !== "0" ? `₹${String(value).replace(/,/g, "")}` : value === "0" ? "₹0" : "-";
 }
 
 function formatEditablePrice(value) {
@@ -85,7 +85,7 @@ function formatEditablePrice(value) {
     return "";
   }
 
-  return new Intl.NumberFormat("en-IN").format(Number(digits));
+  return digits;
 }
 
 function formatNumberAsPrice(value) {
@@ -93,7 +93,7 @@ function formatNumberAsPrice(value) {
     return "-";
   }
 
-  return `₹${new Intl.NumberFormat("en-IN").format(value)}`;
+  return `₹${value}`;
 }
 
 function parsePriceValue(value) {
