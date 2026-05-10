@@ -2,6 +2,7 @@ const modelInput = document.getElementById("model-input");
 const fuelInput = document.getElementById("fuel-input");
 const hybridToneInput = document.getElementById("hybrid-tone-input");
 const variantInput = document.getElementById("variant-input");
+const customerNameInput = document.getElementById("customer-name");
 const resetButton = document.getElementById("reset-button");
 const downloadImageButton = document.getElementById("download-image-button");
 const downloadPdfButton = document.getElementById("download-pdf-button");
@@ -763,6 +764,11 @@ async function shareSelectedCarPdf() {
 async function handleExport(action) {
   if (!selectedRecord) {
     window.alert("Select a car first.");
+    return;
+  }
+
+  if (customerNameInput && customerNameInput.value.trim() === "") {
+    window.alert("Please enter customer name");
     return;
   }
 
