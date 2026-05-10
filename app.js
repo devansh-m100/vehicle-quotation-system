@@ -58,6 +58,8 @@ const editablePriceInputs = [
   detailTargets.glossStudio
 ];
 const resetPriceButtons = [...document.querySelectorAll(".price-reset-button")];
+const addPriceButtons = [...document.querySelectorAll(".price-add-button")];
+const removePriceButtons = [...document.querySelectorAll(".price-remove-button")];
 let selectedRecord = null;
 let originalQuotationValues = {};
 
@@ -76,16 +78,16 @@ function formatPrice(value) {
 
 function formatEditablePrice(value) {
   if (value === null || value === undefined || value === "" || value === "-") {
-    return "";
+    return "0";
   }
 
   const digits = String(value).replace(/[^\d]/g, "");
 
   if (!digits) {
-    return "";
+    return "0";
   }
 
-  return digits;
+  return digits.replace(/^0+/, "") || "0";
 }
 
 function formatNumberAsPrice(value) {
@@ -134,6 +136,11 @@ function restrictPriceInputKeypress(event) {
 
   if (!/^\d$/.test(event.key)) {
     event.preventDefault();
+    return;
+  }
+
+  if (event.target.value === "0") {
+    event.target.value = "";
   }
 }
 
@@ -163,6 +170,9 @@ function normalizePriceInputValue(input) {
   }
 
   if (document.activeElement === input) {
+    if (input.value === "0") {
+      newCursor = 1;
+    }
     input.setSelectionRange(newCursor, newCursor);
   }
 }
@@ -184,16 +194,32 @@ function applyQuotationValues(values) {
 function syncResetButtonState(targetId) {
   const button = resetPriceButtons.find((item) => item.dataset.resetTarget === targetId);
   const input = editablePriceInputs.find((item) => item.id === targetId);
+  const addButton = addPriceButtons.find((item) => item.dataset.actionTarget === targetId);
+  const removeButton = removePriceButtons.find((item) => item.dataset.actionTarget === targetId);
 
-  if (!button || !input) {
+  if (!input) {
     if (button) {
       button.disabled = true;
+    }
+    if (addButton) {
+      addButton.disabled = true;
+    }
+    if (removeButton) {
+      removeButton.disabled = true;
     }
     return;
   }
 
   if (!Object.hasOwn(originalQuotationValues, targetId)) {
-    button.disabled = true;
+    if (button) {
+      button.disabled = true;
+    }
+    if (addButton) {
+      addButton.disabled = true;
+    }
+    if (removeButton) {
+      removeButton.disabled = true;
+    }
     return;
   }
 
@@ -203,11 +229,23 @@ function syncResetButtonState(targetId) {
     || targetId === "dash-cam"
     || targetId === "gloss-studio"
   ) {
-    button.disabled = input.value === originalQuotationValues[targetId] || parsePriceValue(input.value) === 0;
+    const currentPrice = parsePriceValue(input.value);
+
+    if (button) {
+      button.disabled = input.value === originalQuotationValues[targetId] || currentPrice === 0;
+    }
+    if (addButton) {
+      addButton.disabled = currentPrice !== 0;
+    }
+    if (removeButton) {
+      removeButton.disabled = currentPrice === 0;
+    }
     return;
   }
 
-  button.disabled = input.value === originalQuotationValues[targetId];
+  if (button) {
+    button.disabled = input.value === originalQuotationValues[targetId];
+  }
 }
 
 function syncAllResetButtonStates() {
@@ -241,6 +279,12 @@ function recalculateQuotationTotals() {
 
 function updateResetButtonsDisabled(disabled) {
   resetPriceButtons.forEach((button) => {
+    button.disabled = disabled;
+  });
+  addPriceButtons.forEach((button) => {
+    button.disabled = disabled;
+  });
+  removePriceButtons.forEach((button) => {
     button.disabled = disabled;
   });
 }
@@ -795,6 +839,48 @@ resetPriceButtons.forEach((button) => {
     }
 
     input.value = formatEditablePrice(originalQuotationValues[targetId]);
+    recalculateQuotationTotals();
+  });
+});
+
+addPriceButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const targetId = button.dataset.actionTarget;
+
+    if (!targetId || !Object.hasOwn(originalQuotationValues, targetId)) {
+      return;
+    }
+
+    const input = detailTargets[
+      Object.keys(detailTargets).find((key) => detailTargets[key]?.id === targetId)
+    ];
+
+    if (!input || !("value" in input)) {
+      return;
+    }
+
+    input.value = formatEditablePrice(originalQuotationValues[targetId]);
+    recalculateQuotationTotals();
+  });
+});
+
+removePriceButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const targetId = button.dataset.actionTarget;
+
+    if (!targetId || !Object.hasOwn(originalQuotationValues, targetId)) {
+      return;
+    }
+
+    const input = detailTargets[
+      Object.keys(detailTargets).find((key) => detailTargets[key]?.id === targetId)
+    ];
+
+    if (!input || !("value" in input)) {
+      return;
+    }
+
+    input.value = "0";
     recalculateQuotationTotals();
   });
 });
