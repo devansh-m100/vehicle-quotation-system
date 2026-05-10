@@ -69,7 +69,8 @@ quotationDate.textContent = new Intl.DateTimeFormat("en-GB", {
   month: "short",
   year: "numeric",
   hour: "numeric",
-  minute: "2-digit"
+  minute: "2-digit",
+  hour12: true
 }).format(new Date());
 
 function formatPrice(value) {
@@ -540,11 +541,62 @@ async function captureSelectedCarCard(scale = 2) {
     throw new Error("Image export library not available.");
   }
 
+  // Pre-gather computed styles from the live DOM before cloning to ensure exact visual matches
+  const liveInputs = Array.from(resultCard.querySelectorAll("input"));
+  const inputStyles = liveInputs.map((input) => {
+    const computed = window.getComputedStyle(input);
+    return {
+      id: input.id,
+      fontFamily: computed.fontFamily,
+      fontSize: computed.fontSize,
+      fontWeight: computed.fontWeight,
+      color: computed.color,
+      textAlign: computed.textAlign
+    };
+  });
+
   return window.html2canvas(resultCard, {
     backgroundColor: "#f8f5ef",
     scale,
     useCORS: true,
     ignoreElements: (element) => element.classList?.contains("export-actions")
+      || element.classList?.contains("price-reset-button")
+      || element.classList?.contains("price-add-button")
+      || element.classList?.contains("price-remove-button"),
+    onclone: (clonedDoc) => {
+      // By converting the inputs to properly aligned divs in the export clone, 
+      // they render perfectly and bypass the html2canvas text-clipping bug.
+      inputStyles.forEach(({ id, fontFamily, fontSize, fontWeight, color, textAlign }) => {
+        if (!id) return;
+        const clonedInput = clonedDoc.getElementById(id);
+        if (clonedInput) {
+          const div = clonedDoc.createElement("div");
+          div.textContent = clonedInput.value || clonedInput.placeholder || "";
+          div.className = clonedInput.className;
+          
+          div.style.display = "flex";
+          div.style.alignItems = "center";
+          div.style.justifyContent = textAlign === "right" ? "flex-end" : textAlign === "center" ? "center" : "flex-start";
+          div.style.background = "transparent";
+          div.style.border = "none";
+          div.style.padding = "0";
+          div.style.margin = "0";
+          div.style.width = "100%";
+          div.style.height = "100%";
+          div.style.boxSizing = "border-box";
+          
+          div.style.fontFamily = fontFamily;
+          div.style.fontSize = fontSize;
+          div.style.fontWeight = fontWeight;
+          div.style.color = color;
+          div.style.lineHeight = "1.2";
+          div.style.whiteSpace = "nowrap";
+          div.style.overflow = "visible";
+          
+          clonedInput.parentNode.replaceChild(div, clonedInput);
+        }
+      });
+    }
   });
 }
 
@@ -818,7 +870,7 @@ editablePriceInputs.forEach((input) => {
   input.addEventListener("keydown", restrictPriceInputKeypress);
   input.addEventListener("input", () => {
     normalizePriceInputValue(input);
-    recalculateQuotationTotals();
+    recalculateQuotationTotals(input);
   });
 });
 
@@ -839,7 +891,7 @@ resetPriceButtons.forEach((button) => {
     }
 
     input.value = formatEditablePrice(originalQuotationValues[targetId]);
-    recalculateQuotationTotals();
+    recalculateQuotationTotals(input);
   });
 });
 
@@ -860,7 +912,7 @@ addPriceButtons.forEach((button) => {
     }
 
     input.value = formatEditablePrice(originalQuotationValues[targetId]);
-    recalculateQuotationTotals();
+    recalculateQuotationTotals(input);
   });
 });
 
@@ -881,7 +933,7 @@ removePriceButtons.forEach((button) => {
     }
 
     input.value = "0";
-    recalculateQuotationTotals();
+    recalculateQuotationTotals(input);
   });
 });
 
