@@ -361,6 +361,18 @@ body {
   gap: 10px;
 }
 
+.price-input-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.price-prefix {
+  font-weight: 700;
+  color: #1f2937;
+}
+
 .price-input {
   width: 180px;
   border: 0;
@@ -508,6 +520,10 @@ body {
   text-align: left;
 }
 
+.value-price-input-wrap {
+  justify-content: flex-start;
+}
+
 .value-reset-button {
   margin-top: 10px;
 }
@@ -532,6 +548,16 @@ body {
   font-family: "Space Grotesk", sans-serif;
   font-size: clamp(2rem, 3vw, 3rem);
   text-align: center;
+}
+
+.total-price-input-wrap {
+  justify-content: center;
+}
+
+.total-price-prefix {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(2rem, 3vw, 3rem);
+  color: var(--sheet-total-text);
 }
 
 .visually-hidden {
@@ -616,6 +642,11 @@ body {
     width: 100%;
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .price-input-wrap {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .price-input {

@@ -101,42 +101,60 @@
               <div class="price-row">
                 <span>Ex-Showroom Price</span>
                 <div class="price-edit-group">
-                  <input id="ex-showroom" class="price-input" type="text" value="-" />
+                  <div class="price-input-wrap">
+                  <span class="price-prefix">₹</span>
+                    <input id="ex-showroom" class="price-input" type="text" value="" inputmode="numeric" autocomplete="off" />
+                  </div>
                   <button type="button" class="price-reset-button" data-reset-target="ex-showroom">Reset</button>
                 </div>
               </div>
               <div class="price-row">
                 <span>TCS* (@1%)</span>
                 <div class="price-edit-group">
-                  <input id="tcs" class="price-input" type="text" value="-" />
+                  <div class="price-input-wrap">
+                  <span class="price-prefix">₹</span>
+                    <input id="tcs" class="price-input" type="text" value="" inputmode="numeric" autocomplete="off" />
+                  </div>
                   <button type="button" class="price-reset-button" data-reset-target="tcs">Reset</button>
                 </div>
               </div>
               <div class="price-row">
                 <span>Road Tax</span>
                 <div class="price-edit-group">
-                  <input id="road-tax" class="price-input" type="text" value="-" />
+                  <div class="price-input-wrap">
+                  <span class="price-prefix">₹</span>
+                    <input id="road-tax" class="price-input" type="text" value="" inputmode="numeric" autocomplete="off" />
+                  </div>
                   <button type="button" class="price-reset-button" data-reset-target="road-tax">Reset</button>
                 </div>
               </div>
               <div class="price-row">
                 <span>Fastag</span>
                 <div class="price-edit-group">
-                  <input id="fastag" class="price-input" type="text" value="-" />
+                  <div class="price-input-wrap">
+                  <span class="price-prefix">₹</span>
+                    <input id="fastag" class="price-input" type="text" value="" inputmode="numeric" autocomplete="off" />
+                  </div>
                   <button type="button" class="price-reset-button" data-reset-target="fastag">Reset</button>
                 </div>
               </div>
               <div class="price-row">
                 <span>Other Misc (Depot Charges)</span>
                 <div class="price-edit-group">
-                  <input id="misc-charges" class="price-input" type="text" value="-" />
+                  <div class="price-input-wrap">
+                  <span class="price-prefix">₹</span>
+                    <input id="misc-charges" class="price-input" type="text" value="" inputmode="numeric" autocomplete="off" />
+                  </div>
                   <button type="button" class="price-reset-button" data-reset-target="misc-charges">Reset</button>
                 </div>
               </div>
               <div class="price-row">
                 <span>Insurance (3+3 Year)</span>
                 <div class="price-edit-group">
-                  <input id="insurance" class="price-input" type="text" value="-" />
+                  <div class="price-input-wrap">
+                  <span class="price-prefix">₹</span>
+                    <input id="insurance" class="price-input" type="text" value="" inputmode="numeric" autocomplete="off" />
+                  </div>
                   <button type="button" class="price-reset-button" data-reset-target="insurance">Reset</button>
                 </div>
               </div>
@@ -146,16 +164,19 @@
               <h3 class="breakdown-title">Value Package</h3>
 
               <div class="value-package-grid">
-                <div class="detail-item value-package-item"><span>Extended Warranty**</span><input id="extended-warranty" class="price-input value-price-input" type="text" value="-" /><button type="button" class="price-reset-button value-reset-button" data-reset-target="extended-warranty">Reset</button></div>
-                <div class="detail-item value-package-item"><span>Accessory Kit**</span><input id="accessory-kit" class="price-input value-price-input" type="text" value="-" /><button type="button" class="price-reset-button value-reset-button" data-reset-target="accessory-kit">Reset</button></div>
-                <div class="detail-item value-package-item"><span>Dash Cam</span><input id="dash-cam" class="price-input value-price-input" type="text" value="-" /><button type="button" class="price-reset-button value-reset-button" data-reset-target="dash-cam">Reset</button></div>
-                <div class="detail-item value-package-item"><span>Gloss Studio**</span><input id="gloss-studio" class="price-input value-price-input" type="text" value="-" /><button type="button" class="price-reset-button value-reset-button" data-reset-target="gloss-studio">Reset</button></div>
+              <div class="detail-item value-package-item"><span>Extended Warranty**</span><div class="price-input-wrap value-price-input-wrap"><span class="price-prefix">₹</span><input id="extended-warranty" class="price-input value-price-input" type="text" value="" inputmode="numeric" autocomplete="off" /></div><button type="button" class="price-reset-button value-reset-button" data-reset-target="extended-warranty">Reset</button></div>
+              <div class="detail-item value-package-item"><span>Accessory Kit**</span><div class="price-input-wrap value-price-input-wrap"><span class="price-prefix">₹</span><input id="accessory-kit" class="price-input value-price-input" type="text" value="" inputmode="numeric" autocomplete="off" /></div><button type="button" class="price-reset-button value-reset-button" data-reset-target="accessory-kit">Reset</button></div>
+              <div class="detail-item value-package-item"><span>Dash Cam</span><div class="price-input-wrap value-price-input-wrap"><span class="price-prefix">₹</span><input id="dash-cam" class="price-input value-price-input" type="text" value="" inputmode="numeric" autocomplete="off" /></div><button type="button" class="price-reset-button value-reset-button" data-reset-target="dash-cam">Reset</button></div>
+              <div class="detail-item value-package-item"><span>Gloss Studio**</span><div class="price-input-wrap value-price-input-wrap"><span class="price-prefix">₹</span><input id="gloss-studio" class="price-input value-price-input" type="text" value="" inputmode="numeric" autocomplete="off" /></div><button type="button" class="price-reset-button value-reset-button" data-reset-target="gloss-studio">Reset</button></div>
               </div>
             </section>
 
             <section class="total-card total-card-value">
               <p class="total-label">ON ROAD PRICE WITH VALUE PACKAGE</p>
-              <input id="on-road-value" class="price-input total-price-input" type="text" value="-" readonly />
+              <div class="price-input-wrap total-price-input-wrap">
+              <span class="price-prefix total-price-prefix">₹</span>
+                <input id="on-road-value" class="price-input total-price-input" type="text" value="" readonly />
+              </div>
             </section>
 
             <p class="section-note quotation-note" id="record-note">Note: Quotation valid for only 2 days from the above date.</p>

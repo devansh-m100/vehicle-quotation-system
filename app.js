@@ -65,11 +65,27 @@ totalRecords.textContent = `${records.length} variants`;
 quotationDate.textContent = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
   month: "short",
-  year: "numeric"
+  year: "numeric",
+  hour: "numeric",
+  minute: "2-digit"
 }).format(new Date());
 
 function formatPrice(value) {
   return value && value !== "0" ? `₹${value}` : value === "0" ? "₹0" : "-";
+}
+
+function formatEditablePrice(value) {
+  if (value === null || value === undefined || value === "" || value === "-") {
+    return "";
+  }
+
+  const digits = String(value).replace(/[^\d]/g, "");
+
+  if (!digits) {
+    return "";
+  }
+
+  return new Intl.NumberFormat("en-IN").format(Number(digits));
 }
 
 function formatNumberAsPrice(value) {
@@ -92,11 +108,63 @@ function parsePriceValue(value) {
 
 function setDisplayValue(target, value) {
   if ("value" in target) {
-    target.value = value;
+    target.value = formatEditablePrice(value);
     return;
   }
 
   target.textContent = value;
+}
+
+function restrictPriceInputKeypress(event) {
+  const allowedKeys = [
+    "Backspace",
+    "Delete",
+    "ArrowLeft",
+    "ArrowRight",
+    "ArrowUp",
+    "ArrowDown",
+    "Tab",
+    "Home",
+    "End"
+  ];
+
+  if (allowedKeys.includes(event.key) || event.ctrlKey || event.metaKey) {
+    return;
+  }
+
+  if (!/^\d$/.test(event.key)) {
+    event.preventDefault();
+  }
+}
+
+function normalizePriceInputValue(input) {
+  const originalCursor = input.selectionStart ?? 0;
+  const originalValue = input.value;
+
+  let digitsBeforeCursor = 0;
+  for (let i = 0; i < originalCursor; i++) {
+    if (/\d/.test(originalValue[i])) {
+      digitsBeforeCursor++;
+    }
+  }
+
+  input.value = formatEditablePrice(originalValue);
+
+  let newCursor = 0;
+  let digitsSeen = 0;
+  for (let i = 0; i < input.value.length; i++) {
+    if (digitsSeen === digitsBeforeCursor) {
+      break;
+    }
+    if (/\d/.test(input.value[i])) {
+      digitsSeen++;
+    }
+    newCursor++;
+  }
+
+  if (document.activeElement === input) {
+    input.setSelectionRange(newCursor, newCursor);
+  }
 }
 
 function captureQuotationValues() {
@@ -117,10 +185,25 @@ function syncResetButtonState(targetId) {
   const button = resetPriceButtons.find((item) => item.dataset.resetTarget === targetId);
   const input = editablePriceInputs.find((item) => item.id === targetId);
 
-  if (!button || !input || !Object.hasOwn(originalQuotationValues, targetId)) {
+  if (!button || !input) {
     if (button) {
       button.disabled = true;
     }
+    return;
+  }
+
+  if (!Object.hasOwn(originalQuotationValues, targetId)) {
+    button.disabled = true;
+    return;
+  }
+
+  if (
+    targetId === "extended-warranty"
+    || targetId === "accessory-kit"
+    || targetId === "dash-cam"
+    || targetId === "gloss-studio"
+  ) {
+    button.disabled = input.value === originalQuotationValues[targetId] || parsePriceValue(input.value) === 0;
     return;
   }
 
@@ -634,11 +717,17 @@ function renderRecord(record) {
   setDisplayValue(detailTargets.fastag, formatPrice(record.fastag));
   setDisplayValue(detailTargets.miscCharges, formatPrice(record.miscCharges));
   setDisplayValue(detailTargets.leKit, formatPrice(record.leKit));
-  setDisplayValue(detailTargets.extendedWarranty, formatPrice(record.extendedWarranty));
-  setDisplayValue(detailTargets.accessoryKit, formatPrice(record.accessoryKit));
-  setDisplayValue(detailTargets.dashCam, formatPrice(record.dashCam));
-  setDisplayValue(detailTargets.glossStudio, formatPrice(record.glossStudio));
-  originalQuotationValues = captureQuotationValues();
+  setDisplayValue(detailTargets.extendedWarranty, formatPrice("0"));
+  setDisplayValue(detailTargets.accessoryKit, formatPrice("0"));
+  setDisplayValue(detailTargets.dashCam, formatPrice("0"));
+  setDisplayValue(detailTargets.glossStudio, formatPrice("0"));
+  originalQuotationValues = {
+    ...captureQuotationValues(),
+    "extended-warranty": formatEditablePrice(record.extendedWarranty),
+    "accessory-kit": formatEditablePrice(record.accessoryKit),
+    "dash-cam": formatEditablePrice(record.dashCam),
+    "gloss-studio": formatEditablePrice(record.glossStudio)
+  };
   recalculateQuotationTotals();
 }
 
@@ -682,7 +771,11 @@ sharePdfButton.addEventListener("click", () => {
 });
 
 editablePriceInputs.forEach((input) => {
-  input.addEventListener("input", recalculateQuotationTotals);
+  input.addEventListener("keydown", restrictPriceInputKeypress);
+  input.addEventListener("input", () => {
+    normalizePriceInputValue(input);
+    recalculateQuotationTotals();
+  });
 });
 
 resetPriceButtons.forEach((button) => {
@@ -701,7 +794,7 @@ resetPriceButtons.forEach((button) => {
       return;
     }
 
-    input.value = originalQuotationValues[targetId];
+    input.value = formatEditablePrice(originalQuotationValues[targetId]);
     recalculateQuotationTotals();
   });
 });
