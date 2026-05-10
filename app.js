@@ -17,14 +17,17 @@ const filtersMatchCount = document.getElementById("filters-match-count");
 const filtersHeadingMatchCount = document.getElementById("filters-heading-match-count");
 const matchList = document.getElementById("match-list");
 
+const quickQuoteLine = document.getElementById("quick-quote-line");
 const resultTitle = document.getElementById("result-title");
-const resultChip = document.getElementById("result-chip");
 const recordNote = document.getElementById("record-note");
-const resultCard = document.querySelector(".result-card");
+const resultCard = document.querySelector(".quotation-sheet");
+const quotationDate = document.getElementById("quotation-date");
 
 const detailTargets = {
+  breakdownTransmission: document.getElementById("breakdown-transmission"),
   exShowroom: document.getElementById("ex-showroom"),
   onRoadBasic: document.getElementById("on-road-basic"),
+  onRoadBasicRow: document.getElementById("on-road-basic-row"),
   onRoadValue: document.getElementById("on-road-value"),
   fuelType: document.getElementById("fuel-type"),
   transmissionType: document.getElementById("transmission-type"),
@@ -45,9 +48,14 @@ const filterInputs = [modelInput, fuelInput, hybridToneInput, variantInput];
 let selectedRecord = null;
 
 totalRecords.textContent = `${records.length} variants`;
+quotationDate.textContent = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric"
+}).format(new Date());
 
 function formatPrice(value) {
-  return value && value !== "0" ? `Rs. ${value}` : value === "0" ? "Rs. 0" : "-";
+  return value && value !== "0" ? `₹${value}` : value === "0" ? "₹0" : "-";
 }
 
 function uniqueValues(values) {
@@ -490,9 +498,9 @@ function renderRecord(record) {
   selectedRecord = record || null;
 
   if (!record) {
+    quickQuoteLine.textContent = "Quick Quote generated for Vehicle Name Variant Fuel Transmission";
     resultTitle.textContent = "Choose a car to view pricing";
-    resultChip.textContent = "Waiting for selection";
-    recordNote.textContent = "Pick a matching record to see the complete price breakup.";
+    recordNote.textContent = "Note: Quotation valid for only 2 days from the above date.";
     setExportButtonsDisabled(true);
 
     Object.values(detailTargets).forEach((target) => {
@@ -501,13 +509,15 @@ function renderRecord(record) {
     return;
   }
 
+  quickQuoteLine.textContent = `Quick Quote generated for ${record.modelName} ${record.variant} ${record.fuelType} ${record.transmissionType}`;
   resultTitle.textContent = `${record.modelName} ${record.variant}`;
-  resultChip.textContent = `${record.fuelType} | ${record.transmissionType}`;
-  recordNote.textContent = record.note || "Price details loaded from dataset.";
+  recordNote.textContent = "Note: Quotation valid for only 2 days from the above date.";
   setExportButtonsDisabled(false);
 
+  detailTargets.breakdownTransmission.textContent = record.transmissionType;
   detailTargets.exShowroom.textContent = formatPrice(record.exShowroom);
   detailTargets.onRoadBasic.textContent = formatPrice(record.onRoadBasic);
+  detailTargets.onRoadBasicRow.textContent = formatPrice(record.onRoadBasic);
   detailTargets.onRoadValue.textContent = formatPrice(record.onRoadValue);
   detailTargets.fuelType.textContent = record.fuelType;
   detailTargets.transmissionType.textContent = record.transmissionType;
@@ -515,8 +525,8 @@ function renderRecord(record) {
   detailTargets.tcs.textContent = formatPrice(record.tcs);
   detailTargets.insurance.textContent = formatPrice(record.insurance);
   detailTargets.fastag.textContent = formatPrice(record.fastag);
-  detailTargets.leKit.textContent = formatPrice(record.leKit);
   detailTargets.miscCharges.textContent = formatPrice(record.miscCharges);
+  detailTargets.leKit.textContent = formatPrice(record.leKit);
   detailTargets.extendedWarranty.textContent = formatPrice(record.extendedWarranty);
   detailTargets.accessoryKit.textContent = formatPrice(record.accessoryKit);
   detailTargets.dashCam.textContent = formatPrice(record.dashCam);
